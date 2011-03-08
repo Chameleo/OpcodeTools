@@ -1,0 +1,9 @@
+This is a simple form with a few functions for converting opcodes as server sees them to/from various values used by WoW client.
+Don't expect it to magically give you all the opcodes.
+Currently for version 4.0.6.
+
+Fields exaplanation:
+Opcode (hex/decimal) - opcode as sends sends and recieves it.
+Offset (dec) - offset of the handler in client packet handler table.
+Converted (dec) - intermediate value for calculating the Offset.
+Special (hex) - value used in NetClient__ProcessSpecialOpcodes.

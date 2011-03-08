@@ -33,8 +33,6 @@ namespace OpcodeTools
 			}
 			catch (Exception)
 			{
-		
-				throw;
 			}
 			
 		}
@@ -84,8 +82,6 @@ namespace OpcodeTools
 			}
 			catch (Exception)
 			{
-
-				throw;
 			}
 		}
 	}
