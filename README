@@ -3,7 +3,8 @@ Don't expect it to magically give you all the opcodes.
 Currently for version 4.0.6.
 
 Fields exaplanation:
-Opcode (hex/decimal) - opcode as sends sends and recieves it.
+Opcode (hex/decimal) - opcode as server sends and recieves it.
 Offset (dec) - offset of the handler in client packet handler table.
 Converted (dec) - intermediate value for calculating the Offset.
 Special (hex) - value used in NetClient__ProcessSpecialOpcodes.
+Auth (dec) - value used in NetClient__HandleAuthOpcodes.
