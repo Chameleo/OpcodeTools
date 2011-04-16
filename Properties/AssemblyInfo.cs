@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("OpcodeTools")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Chameleon")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("OpcodeTools")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]

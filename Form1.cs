@@ -5,11 +5,14 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace OpcodeTools
 {
 	public partial class Form1 : Form
 	{
+        FormulasBase f;
+
         bool IgnoreTextChanged = false;
 
 		public Form1()
@@ -53,20 +56,20 @@ namespace OpcodeTools
             CleanValues();
 
             IgnoreTextChanged = true;
-            if (IsAuthOpcode(opcode))
+            if (f.IsAuthOpcode(opcode))
             {
-                uint auth = CalcAuthFromOpcode(opcode);
+                uint auth = f.CalcAuthFromOpcode(opcode);
                 authBox.Text = auth.ToString();
             }
-            else if (IsSpecialOpcode(opcode))
+            else if (f.IsSpecialOpcode(opcode))
             {
-                uint specialHandlerNum = CalcSpecialFromOpcode(opcode);
+                uint specialHandlerNum = f.CalcSpecialFromOpcode(opcode);
                 specialBox.Text = String.Format("{0:x}", specialHandlerNum);
             }
-            else if (IsNormalOpcode(opcode))
+            else if (f.IsNormalOpcode(opcode))
             {
-                uint crypt = CalcCryptedFromOpcode(opcode);
-                uint offset = CalcOffsetFromOpcode(opcode);
+                uint crypt = f.CalcCryptedFromOpcode(opcode);
+                uint offset = f.CalcOffsetFromOpcode(opcode);
 			    cryptedBox.Text = crypt.ToString();
 			    offsetBox.Text = offset.ToString();
             }
@@ -121,55 +124,13 @@ namespace OpcodeTools
             IgnoreTextChanged = false;
         }
 
-        #region Verison specific functions. Currently 4.0.6
-
-        private static bool IsAuthOpcode(uint opcode)
-        {
-            return (opcode & 0x3FFD) == 8217;
-        }
-        private static bool IsSpecialOpcode(uint opcode)
-        {
-            return !IsAuthOpcode(opcode) && (opcode & 0xB2AD) == 12;
-        }
-        private static bool IsNormalOpcode(uint opcode)
-        {
-            return !IsSpecialOpcode(opcode) && !IsAuthOpcode(opcode) &&
-                    (opcode & 0x2093) == 8320 && opcode != 60096 && opcode != 44964;
-        }
-
-        private uint CalcCryptedFromOpcode(uint opcode)
-        {
-            uint a1 = opcode;
-            return (a1 & 0xC | ((a1 & 0x60 | ((a1 & 0x1F00 | (a1 >> 1) & 0x6000) >> 1)) >> 1)) >> 2;
-        }
-
-		private uint CalcOffsetFromOpcode(uint opcode)
-		{
-            uint crypted = CalcCryptedFromOpcode(opcode);
-			return (crypted * 4) + 1376;
-		}
-
-		public uint CalcSpecialFromOpcode(uint opcode)
-		{
-			uint a4 = opcode;
-			return (a4 & 2 | ((a4 & 0x10 | ((a4 & 0x40 | ((a4 & 0x100 | ((a4 & 0xC00 | (a4 >> 2) & 0x1000) >> 1)) >> 1)) >> 1)) >> 2)) >> 1;
-		}
-
-        public uint CalcAuthFromOpcode(uint opcode)
-        {
-            uint a1 = opcode;
-            return (a1 & 2 | (a1 >> 12) & 0xC) >> 1;
-        }
-
-        #endregion
-
         private uint CalcOpcodeFromSpecial(uint offset)
 		{
 			for (uint i = 1; i < 0xFFFF; ++i)
 			{
-				if (IsSpecialOpcode(i))
+                if (f.IsSpecialOpcode(i))
 				{
-					if (CalcSpecialFromOpcode(i) == offset)
+                    if (f.CalcSpecialFromOpcode(i) == offset)
 						return i;
 				}
 			}
@@ -180,9 +141,9 @@ namespace OpcodeTools
 		{
 			for (uint i = 1; i < 0xFFFF; ++i)
 			{
-				if (IsNormalOpcode(i))
+                if (f.IsNormalOpcode(i))
 				{
-					if (CalcOffsetFromOpcode(i) == offset)
+                    if (f.CalcOffsetFromOpcode(i) == offset)
 						return i;
 				}
 			}
@@ -193,13 +154,32 @@ namespace OpcodeTools
 		{
 			for (uint i = 1; i < 0xFFFF; ++i)
 			{
-                if (IsAuthOpcode(i) && 
-					CalcAuthFromOpcode(i) == auth)
+                if (f.IsAuthOpcode(i) &&
+                    f.CalcAuthFromOpcode(i) == auth)
 				{
 						return i;
 				}
 			}
 			return 0;
 		}
+
+        private void Versions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            f = (FormulasBase)Versions.SelectedItem;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            foreach (Type t in Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (t.IsSubclassOf(typeof(FormulasBase)))
+                {
+                    object formulas = t.GetConstructor(new Type[] { }).Invoke(new Object[] { });
+                    Versions.Items.Add(formulas);
+                }
+            }
+            // choose the newest by default
+            Versions.SelectedIndex = Versions.Items.Count - 1;
+        }
 	}
 }
