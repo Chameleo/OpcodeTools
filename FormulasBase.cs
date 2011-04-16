@@ -9,7 +9,7 @@ namespace OpcodeTools
         protected abstract bool NormalCheck(uint opcode);
         protected abstract bool SpecialCheck(uint opcode);
         protected abstract bool AuthCheck(uint opcode);
-        protected uint BaseOffset { get { return 1376; } }
+        protected virtual uint BaseOffset { get { return 1376; } }
 
         public bool IsAuthOpcode(uint opcode)
         {
