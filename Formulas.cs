@@ -88,6 +88,47 @@ namespace OpcodeTools
         }
     }
 
+    class Windows13875 : FormulasBase
+    {
+        public override string ToString()
+        {
+            return "0.4.1.0.13875 Windows";
+        }
+
+        protected override bool AuthCheck(uint opcode)
+        {
+            return (opcode & 0xDFF6) == 546;
+        }
+
+        protected override bool SpecialCheck(uint opcode)
+        {
+            return (opcode & 0xD57) == 1346;
+        }
+
+        protected override bool NormalCheck(uint opcode)
+        {
+            return (opcode & 0x8AA) == 2088 && opcode != 52776 && opcode != 7784;
+        }
+
+        public override uint CalcCryptedFromOpcode(uint opcode)
+        {
+            uint v6 = opcode;
+            return v6 & 1 | ((v6 & 4 | ((v6 & 0x10 | ((v6 & 0x40 | ((v6 & 0x700 | (v6 >> 1) & 0x7800) >> 1)) >> 1)) >> 1)) >> 1);
+        }
+
+        public override uint CalcSpecialFromOpcode(uint opcode)
+        {
+            uint a4 = opcode;
+            return (a4 & 8 | ((a4 & 0x20 | (((a4 & 0x80) | ((a4 & 0x200 | (a4 >> 2) & 0x3C00) >> 1)) >> 1)) >> 1)) >> 3;
+        }
+
+        public override uint CalcAuthFromOpcode(uint opcode)
+        {
+            uint a4 = opcode;
+            return a4 & 1 | ((a4 & 8 | (a4 >> 9) & 0x10) >> 2);
+        }
+    }
+
     class Mac13875 : FormulasBase
     {
         public override string ToString()
