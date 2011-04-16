@@ -11,7 +11,7 @@ namespace OpcodeTools
             return "4.0.6 Windows";
         }
 
-        public override bool AuthCheck(uint opcode)
+        protected override bool AuthCheck(uint opcode)
         {
             return (opcode & 0x3FFD) == 8217;
         }
