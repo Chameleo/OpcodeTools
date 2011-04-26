@@ -82,7 +82,7 @@ namespace OpcodeTools
                 return;
             try
             {
-                SetOpcode(CalcOpcodeFromSpecial(Convert.ToUInt32(specialBox.Text, 16)));
+                SetOpcode(f.CalcOpcodeFromSpecial(Convert.ToUInt32(specialBox.Text, 16)));
             }
             catch (Exception)
             {
@@ -95,7 +95,7 @@ namespace OpcodeTools
                 return;
             try
             {
-                SetOpcode(CalcOpcodeFromOffset(Convert.ToUInt32(offsetBox.Text)));
+                SetOpcode(f.CalcOpcodeFromOffset(Convert.ToUInt32(offsetBox.Text)));
 
             }
             catch (Exception)
@@ -109,7 +109,7 @@ namespace OpcodeTools
                 return;
             try
             {
-                SetOpcode(CalcOpcodeFromAuth(Convert.ToUInt32(authBox.Text)));
+                SetOpcode(f.CalcOpcodeFromAuth(Convert.ToUInt32(authBox.Text)));
             }
             catch (Exception)
             {
@@ -123,45 +123,6 @@ namespace OpcodeTools
             opcodeDecBox.Text = opcode.ToString();
             IgnoreTextChanged = false;
         }
-
-        private uint CalcOpcodeFromSpecial(uint offset)
-		{
-			for (uint i = 1; i < 0xFFFF; ++i)
-			{
-                if (f.IsSpecialOpcode(i))
-				{
-                    if (f.CalcSpecialFromOpcode(i) == offset)
-						return i;
-				}
-			}
-			return 0;
-		}
-
-		private uint CalcOpcodeFromOffset(uint offset)
-		{
-			for (uint i = 1; i < 0xFFFF; ++i)
-			{
-                if (f.IsNormalOpcode(i))
-				{
-                    if (f.CalcOffsetFromOpcode(i) == offset)
-						return i;
-				}
-			}
-			return 0;
-		}
-
-		private uint CalcOpcodeFromAuth(uint auth)
-		{
-			for (uint i = 1; i < 0xFFFF; ++i)
-			{
-                if (f.IsAuthOpcode(i) &&
-                    f.CalcAuthFromOpcode(i) == auth)
-				{
-						return i;
-				}
-			}
-			return 0;
-		}
 
         private void Versions_SelectedIndexChanged(object sender, EventArgs e)
         {

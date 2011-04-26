@@ -1,7 +1,7 @@
 ﻿using System;
 namespace OpcodeTools
 {
-    abstract class FormulasBase
+    public abstract class FormulasBase
     {
         public abstract uint CalcCryptedFromOpcode(uint opcode);
         public abstract uint CalcSpecialFromOpcode(uint opcode);
@@ -30,6 +30,45 @@ namespace OpcodeTools
         {
             uint crypted = CalcCryptedFromOpcode(opcode);
             return (crypted * 4) + BaseOffset;
+        }
+
+        public uint CalcOpcodeFromSpecial(uint offset)
+        {
+            for (uint i = 1; i < 0xFFFF; ++i)
+            {
+                if (IsSpecialOpcode(i))
+                {
+                    if (CalcSpecialFromOpcode(i) == offset)
+                        return i;
+                }
+            }
+            return 0;
+        }
+
+        public uint CalcOpcodeFromOffset(uint offset)
+        {
+            for (uint i = 1; i < 0xFFFF; ++i)
+            {
+                if (IsNormalOpcode(i))
+                {
+                    if (CalcOffsetFromOpcode(i) == offset)
+                        return i;
+                }
+            }
+            return 0;
+        }
+
+        public uint CalcOpcodeFromAuth(uint auth)
+        {
+            for (uint i = 1; i < 0xFFFF; ++i)
+            {
+                if (IsAuthOpcode(i) &&
+                    CalcAuthFromOpcode(i) == auth)
+                {
+                    return i;
+                }
+            }
+            return 0;
         }
     }
 }
