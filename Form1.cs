@@ -29,7 +29,7 @@ namespace OpcodeTools
 			if(!UInt32.TryParse(opcodeDecBox.Text, out opcode))
 				return;
 
-            opcodeHexBox.Text = String.Format("{0:x}", opcode);
+            opcodeHexBox.Text = String.Format("{0:X}", opcode);
 			updateValuesForOpcode(opcode);
 		}
 

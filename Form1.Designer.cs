@@ -171,9 +171,9 @@
             // 
             this.Versions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.Versions.FormattingEnabled = true;
-            this.Versions.Location = new System.Drawing.Point(50, 4);
+            this.Versions.Location = new System.Drawing.Point(40, 4);
             this.Versions.Name = "Versions";
-            this.Versions.Size = new System.Drawing.Size(121, 21);
+            this.Versions.Size = new System.Drawing.Size(142, 21);
             this.Versions.Sorted = true;
             this.Versions.TabIndex = 6;
             this.Versions.SelectedIndexChanged += new System.EventHandler(this.Versions_SelectedIndexChanged);
