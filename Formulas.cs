@@ -45,6 +45,46 @@ namespace OpcodeTools
         }
     }
 
+    public class Mac406 : FormulasBase
+    {
+        public override string ToString()
+        {
+            return "4.0.6.13623 Mac";
+        }
+
+        protected override uint BaseOffset { get { return 1380; } }
+
+        protected override bool AuthCheck(uint opcode)
+        {
+            return (opcode & 0x3FFD) == 8217;
+        }
+
+        protected override bool SpecialCheck(uint opcode)
+        {
+            return (opcode & 0xB2AD) == 12;
+        }
+
+        protected override bool NormalCheck(uint opcode)
+        {
+            return (opcode & 0x2093) == 8320 && opcode != 60096 && opcode != 44964;
+        }
+
+        public override uint CalcCryptedFromOpcode(uint opcode)
+        {
+            return ((opcode & 0xC000u) >> 5) | ((opcode & 0x1F00u) >> 4) | ((opcode & 0x60u) >> 3) | ((opcode & 0xCu) >> 2);
+        }
+
+        public override uint CalcSpecialFromOpcode(uint opcode)
+        {
+            return ((opcode & 0x4000) >> 8) | ((opcode & 0xC00) >> 6) | ((opcode & 0x100) >> 5) | ((opcode & 0x40) >> 4) | ((opcode & 0x10) >> 3) | ((opcode & 2) >> 1);
+        }
+
+        public override uint CalcAuthFromOpcode(uint opcode)
+        {
+            return ((opcode & 0xC000) >> 13) | ((opcode & 2) >> 1);
+        }
+    }
+
     public class Mac13860 : FormulasBase
     {
         public override string ToString()
@@ -291,6 +331,46 @@ namespace OpcodeTools
         public override uint CalcAuthFromOpcode(uint opcode)
         {
             return (opcode & 0x80 | ((opcode & 0x800 | (opcode >> 3) & 0x1000) >> 3)) >> 7;
+        }
+    }
+
+    public class Mac420 : FormulasBase
+    {
+        public override string ToString()
+        {
+            return "4.2.0.14333 Mac";
+        }
+
+        protected override uint BaseOffset { get { return 1380; } }
+
+        protected override bool AuthCheck(uint opcode)
+        {
+            return (opcode & 0x777F) == 1040;
+        }
+
+        protected override bool SpecialCheck(uint opcode)
+        {
+            return (opcode & 0x2399) == 769;
+        }
+
+        protected override bool NormalCheck(uint opcode)
+        {
+            return (opcode & 0x2322) == 8738 && opcode != 57919 && opcode != 26159;
+        }
+
+        public override uint CalcCryptedFromOpcode(uint opcode)
+        {
+            return ((opcode & 0xC000u) >> 5) | ((opcode & 0x1C00u) >> 4) | opcode & 1 | ((opcode & 0xC0u) >> 2) | ((opcode & 0x1Cu) >> 1);
+        }
+
+        public override uint CalcSpecialFromOpcode(uint opcode)
+        {
+            return ((opcode & 0xC000) >> 7) | ((opcode & 0x1C00) >> 6) | ((opcode & 6) >> 1) | ((opcode & 0x60) >> 3);
+        }
+
+        public override uint CalcAuthFromOpcode(uint opcode)
+        {
+            return ((opcode & 0x8000) >> 13) | ((opcode & 0x80) >> 7) | ((opcode & 0x800) >> 10);
         }
     }
 }
