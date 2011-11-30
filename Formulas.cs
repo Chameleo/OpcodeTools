@@ -373,4 +373,82 @@ namespace OpcodeTools
             return ((opcode & 0x8000) >> 13) | ((opcode & 0x80) >> 7) | ((opcode & 0x800) >> 10);
         }
     }
+
+    public class Windows430 : FormulasBase
+    {
+        public override string ToString()
+        {
+            return "4.3.0.15005 Windows";
+        }
+
+        protected override bool AuthCheck(uint opcode)
+        {
+            return (opcode & 0xEBDE) == 770;
+        }
+
+        protected override bool SpecialCheck(uint opcode)
+        {
+            return (opcode & 0x9549) == 1032;
+        }
+
+        protected override bool NormalCheck(uint opcode)
+        {
+            return (opcode & 0x8159) == 0;
+        }
+
+        public override uint CalcCryptedFromOpcode(uint opcode)
+        {
+            return (opcode & 6 | ((opcode & 0x20 | (((opcode & 0x80) | (opcode >> 1) & 0x3F00) >> 1)) >> 2)) >> 1;
+        }
+
+        public override uint CalcSpecialFromOpcode(uint opcode)
+        {
+            return (opcode & 6 | ((opcode & 0x30 | (((opcode & 0x80) | ((opcode & 0x200 | ((opcode & 0x800 | (opcode >> 1) & 0x3000) >> 1)) >> 1)) >> 1)) >> 1)) >> 1;
+        }
+
+        public override uint CalcAuthFromOpcode(uint opcode)
+        {
+            return opcode & 1 | ((opcode & 0x20 | ((opcode & 0x400 | (opcode >> 1) & 0x800) >> 4)) >> 4);
+        }
+    }
+
+    public class Mac430 : FormulasBase
+    {
+        public override string ToString()
+        {
+            return "4.3.0.15005 Mac";
+        }
+
+        protected override uint BaseOffset { get { return 1380; } }
+
+        protected override bool AuthCheck(uint opcode)
+        {
+            return (opcode & 0xEBDE) == 770;
+        }
+
+        protected override bool SpecialCheck(uint opcode)
+        {
+            return (opcode & 0x9549) == 1032;
+        }
+
+        protected override bool NormalCheck(uint opcode)
+        {
+            return (opcode & 0x8159) == 0;
+        }
+
+        public override uint CalcCryptedFromOpcode(uint opcode)
+        {
+            return ((opcode & 0x7E00u) >> 5) | ((opcode & 0x80u) >> 4) | ((opcode & 6u) >> 1) | ((opcode & 0x20u) >> 3);
+        }
+
+        public override uint CalcSpecialFromOpcode(uint opcode)
+        {
+            return ((opcode & 0x6000) >> 6) | ((opcode & 0x800) >> 5) | ((opcode & 0x200) >> 4) | ((opcode & 0x80) >> 3) | ((opcode & 6) >> 1) | ((opcode & 0x30) >> 2);
+        }
+
+        public override uint CalcAuthFromOpcode(uint opcode)
+        {
+            return ((opcode & 0x1000) >> 9) | opcode & 1 | ((opcode & 0x400) >> 8) | ((opcode & 0x20) >> 4);
+        }
+    }
 }
