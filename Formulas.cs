@@ -451,4 +451,42 @@ namespace OpcodeTools
             return ((opcode & 0x1000) >> 9) | opcode & 1 | ((opcode & 0x400) >> 8) | ((opcode & 0x20) >> 4);
         }
     }
+
+    public class Windows434 : FormulasBase
+    {
+        public override string ToString()
+        {
+            return "4.3.4.15595 Windows";
+        }
+
+        protected override bool AuthCheck(uint opcode)
+        {
+            return (opcode & 0xB3FD) == 320;
+        }
+
+        protected override bool SpecialCheck(uint opcode)
+        {
+            return (opcode & 0x92E8) == 4256;
+        }
+
+        protected override bool NormalCheck(uint opcode)
+        {
+            return (opcode & 0x90CC) == 4;
+        }
+
+        public override uint CalcCryptedFromOpcode(uint opcode)
+        {
+            return (opcode & 3) | ((opcode & 0x30 | ((opcode & 0xF00 | (opcode >> 1) & 0x3000) >> 2)) >> 2);
+        }
+
+        public override uint CalcSpecialFromOpcode(uint opcode)
+        {
+            return (opcode & 7) | ((opcode & 0x10 | ((opcode & 0x100 | ((opcode & 0xC00 | (opcode >> 1) & 0x3000) >> 1)) >> 3)) >> 1);
+        }
+
+        public override uint CalcAuthFromOpcode(uint opcode)
+        {
+            return (opcode & 2 | ((opcode & 0xC00 | (opcode >> 2) & 0x1000) >> 8)) >> 1;
+        }
+    }
 }
